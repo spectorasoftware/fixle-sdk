@@ -6,7 +6,7 @@
  * allowing you to manage properties, inspections, and appliances.
  * 
  * @example
- * ```typescript
+ * ```javascript
  * import { FixleClient } from '@spectora/fixle-sdk';
  * 
  * const client = new FixleClient({

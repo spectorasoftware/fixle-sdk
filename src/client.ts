@@ -107,7 +107,7 @@ interface JsonApiErrorResponse {
  * Client for interacting with the Fixle API
  * 
  * @example
- * ```typescript
+ * ```javascript
  * const client = new FixleClient({
  *   apiUrl: 'https://api.fixle.com',
  *   apiKey: 'your-api-key'
@@ -221,7 +221,7 @@ export class FixleClient {
    * @throws Error if the API request fails
    * 
    * @example
-   * ```typescript
+   * ```javascript
    * const propertyId = await client.findOrCreateProperty('123 Main St, Portland, OR 97201');
    * console.log(`Created property with ID: ${propertyId}`);
    * ```
@@ -256,7 +256,7 @@ export class FixleClient {
    * @throws Error if the API request fails or the property doesn't exist
    * 
    * @example
-   * ```typescript
+   * ```javascript
    * await client.createInspection(123, 45678);
    * console.log('Inspection created successfully');
    * ```
@@ -283,7 +283,7 @@ export class FixleClient {
    * @throws Error if the API request fails or the property doesn't exist
    * 
    * @example
-   * ```typescript
+   * ```javascript
    * await client.createAppliance(123, {
    *   item_name: 'Water Heater',
    *   section_name: 'Basement',
