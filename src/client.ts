@@ -146,7 +146,7 @@ export class FixleClient {
 
   /**
    * Makes an HTTP request to the Fixle API
-   * @internal
+   * @private
    * @param method - HTTP method (GET, POST, etc.)
    * @param path - API endpoint path
    * @param data - Optional request body data
