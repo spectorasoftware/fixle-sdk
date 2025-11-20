@@ -1,2 +1,2 @@
-export { FixleClient, FixleClientConfig, Appliance, ExtractedData } from './client';
+export { FixleClient, FixleClientConfig, Appliance } from './client';
 

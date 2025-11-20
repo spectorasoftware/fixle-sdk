@@ -42,11 +42,6 @@ export interface InspectionRequest {
   };
 }
 
-export interface ExtractedData {
-  inspection_id: number;
-  address: string;
-  appliances: Appliance[];
-}
 
 export interface FixleClientConfig {
   apiUrl: string;
@@ -172,8 +167,8 @@ export class FixleClient {
     await this.makeApiRequest('POST', `/api/v1/properties/${propertyId}/inspections`, inspectionData);
   }
 
-  // Create property appliance
-  async createPropertyAppliance(propertyId: number, appliance: Appliance): Promise<void> {
+  // Create appliance
+  async createAppliance(propertyId: number, appliance: Appliance): Promise<void> {
     const applianceData: PropertyApplianceRequest = {
       property_appliance: {
         appliance_id: 1,
@@ -188,26 +183,5 @@ export class FixleClient {
     await this.makeApiRequest('POST', `/api/v1/properties/${propertyId}/appliances`, applianceData);
   }
 
-  // Send appliances to fixle-rails API
-  async sendToFixleApi(data: ExtractedData): Promise<number> {
-    const propertyId = await this.findOrCreateProperty(data.address);
-    console.log(`Property ID: ${propertyId}`);
-
-    await this.createInspection(propertyId, data.inspection_id);
-    console.log(`Created inspection: ${data.inspection_id}`);
-
-    let created = 0;
-    for (const appliance of data.appliances) {
-      try {
-        await this.createPropertyAppliance(propertyId, appliance);
-        created++;
-        console.log(`Created appliance: ${appliance.item_name}`);
-      } catch (error) {
-        console.warn(`Failed to create appliance ${appliance.item_name}:`, error instanceof Error ? error.message : error);
-      }
-    }
-
-    return created;
-  }
 }
 
