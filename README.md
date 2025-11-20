@@ -1,7 +1,7 @@
 # Fixle SDK
 
 [![CI](https://github.com/spectorasoftware/fixle-sdk/actions/workflows/ci.yml/badge.svg)](https://github.com/spectorasoftware/fixle-sdk/actions/workflows/ci.yml)
-[![Docs](https://img.shields.io/badge/docs-TypeDoc-blue)](https://spectorasoftware.github.io/fixle-sdk/)
+[![Docs](https://img.shields.io/badge/docs-JSDoc-blue)](https://spectorasoftware.github.io/fixle-sdk/index.html)
 
 TypeScript SDK for interacting with the Fixle API.
 
