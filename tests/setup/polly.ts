@@ -1,6 +1,7 @@
 import { Polly } from '@pollyjs/core';
 import NodeHttpAdapter from '@pollyjs/adapter-node-http';
 import FSPersister from '@pollyjs/persister-fs';
+import path from 'path';
 
 // Register the adapters and persisters
 Polly.register(NodeHttpAdapter);
@@ -13,11 +14,11 @@ export function setupPolly(recordingName: string) {
     persister: 'fs',
     persisterOptions: {
       fs: {
-        recordingsDir: './tests/recordings',
+        recordingsDir: path.resolve(__dirname, '../recordings'),
       },
     },
     mode: (process.env.POLLY_MODE as any) || 'replay', // 'record' | 'replay' | 'passthrough' | 'stopped'
-    recordIfMissing: true, // Record if cassette doesn't exist
+    recordIfMissing: process.env.POLLY_MODE === 'record', // Only record when explicitly in record mode
     recordFailedRequests: true, // Record failed requests (4xx, 5xx)
     matchRequestsBy: {
       method: true,
