@@ -105,7 +105,7 @@ interface Appliance {
 
 ## Documentation
 
-Full API documentation is available at: https://spectorasoftware.github.io/fixle-sdk/
+Full API documentation is available at: https://spectorasoftware.github.io/fixle-sdk/index.html
 
 To generate docs locally:
 
