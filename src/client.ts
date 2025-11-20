@@ -107,18 +107,17 @@ interface JsonApiErrorResponse {
  * Client for interacting with the Fixle API
  * 
  * @example
- * ```javascript
  * const client = new FixleClient({
  *   apiUrl: 'https://api.fixle.com',
  *   apiKey: 'your-api-key'
  * });
- * 
+ *
  * // Create a property
  * const propertyId = await client.findOrCreateProperty('123 Main St, Portland, OR 97201');
- * 
+ *
  * // Create an inspection
  * await client.createInspection(propertyId, 12345);
- * 
+ *
  * // Add an appliance
  * await client.createAppliance(propertyId, {
  *   item_name: 'Water Heater',
@@ -129,7 +128,6 @@ interface JsonApiErrorResponse {
  *   manufacturer: 'Rheem Manufacturing',
  *   year: '2020'
  * });
- * ```
  */
 export class FixleClient {
   private apiUrl: string;
@@ -221,10 +219,8 @@ export class FixleClient {
    * @throws Error if the API request fails
    * 
    * @example
-   * ```javascript
    * const propertyId = await client.findOrCreateProperty('123 Main St, Portland, OR 97201');
    * console.log(`Created property with ID: ${propertyId}`);
-   * ```
    */
   async findOrCreateProperty(address: string): Promise<number> {
     const parts = address.split(',').map(s => s.trim());
@@ -256,10 +252,8 @@ export class FixleClient {
    * @throws Error if the API request fails or the property doesn't exist
    * 
    * @example
-   * ```javascript
    * await client.createInspection(123, 45678);
    * console.log('Inspection created successfully');
-   * ```
    */
   async createInspection(propertyId: number, inspectionId: number): Promise<void> {
     const inspectionData: InspectionRequest = {
@@ -283,7 +277,6 @@ export class FixleClient {
    * @throws Error if the API request fails or the property doesn't exist
    * 
    * @example
-   * ```javascript
    * await client.createAppliance(123, {
    *   item_name: 'Water Heater',
    *   section_name: 'Basement',
@@ -293,7 +286,6 @@ export class FixleClient {
    *   manufacturer: 'Rheem Manufacturing',
    *   year: '2020'
    * });
-   * ```
    */
   async createAppliance(propertyId: number, appliance: Appliance): Promise<void> {
     const applianceData: PropertyApplianceRequest = {
