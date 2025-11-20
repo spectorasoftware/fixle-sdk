@@ -23,7 +23,7 @@ export function setupPolly(recordingName: string) {
     matchRequestsBy: {
       method: true,
       headers: false, // Don't match by headers (API key will be different)
-      body: true,
+      body: false, // Don't match by body (tests use Date.now() for unique values)
       order: false,
       url: {
         protocol: true,
