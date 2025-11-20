@@ -1,0 +1,9 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": ["src/index.ts"],
+  "out": "docs",
+  "name": "Fixle SDK",
+  "readme": "README.md",
+  "excludePrivate": true,
+  "excludeInternal": true
+}
