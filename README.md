@@ -100,6 +100,18 @@ interface Appliance {
 }
 ```
 
+## Documentation
+
+Full API documentation is available at: https://spectorasoftware.github.io/fixle-sdk/
+
+To generate docs locally:
+
+```bash
+npm run docs
+```
+
+Then open `docs/index.html` in your browser.
+
 ## Development
 
 ```bash
@@ -114,6 +126,9 @@ npm test
 
 # Watch mode
 npm run test:watch
+
+# Generate docs
+npm run docs
 ```
 
 ## License
