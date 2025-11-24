@@ -21,6 +21,13 @@
   ],
   "author": "Spectora Software",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/spectora/fixle-sdk.git"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "devDependencies": {
     "@pollyjs/adapter-node-http": "^6.0.6",
     "@pollyjs/core": "^6.0.6",
