@@ -10,6 +10,7 @@
     "test:unit": "jest tests/client.test.ts",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
+    "prepare": "npm run build",
     "prepublishOnly": "npm run build",
     "docs": "jsdoc -c jsdoc.json"
   },
