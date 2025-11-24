@@ -1,5 +1,5 @@
 {
-  "name": "@spectora/fixle-sdk",
+  "name": "@spectorasoftware/fixle-sdk",
   "version": "1.0.0",
   "description": "TypeScript SDK for Fixle API",
   "main": "dist/index.js",

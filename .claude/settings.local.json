@@ -9,7 +9,8 @@
       "Bash(git push:*)",
       "WebFetch(domain:github.com)",
       "Bash(npm run build:*)",
-      "Bash(npm run docs:*)"
+      "Bash(npm run docs:*)",
+      "Bash(gh release create:*)"
     ],
     "deny": [],
     "ask": []
