@@ -59,6 +59,7 @@ export interface InspectionRequest {
     external_id: string;
     inspection_date?: string;
     inspector_name?: string;
+    inspector_image_url?: string;
     notes?: string;
   };
 }
@@ -245,20 +246,26 @@ export class FixleClient {
 
   /**
    * Creates an inspection record for a property
-   * 
+   *
    * @param propertyId - ID of the property to associate the inspection with
    * @param inspectionId - External inspection ID (from the source system)
+   * @param inspectorImageUrl - Optional URL to the inspector's profile image
    * @returns Promise that resolves when the inspection is created
    * @throws Error if the API request fails or the property doesn't exist
-   * 
+   *
    * @example
    * await client.createInspection(123, 45678);
    * console.log('Inspection created successfully');
+   *
+   * @example
+   * // With inspector image
+   * await client.createInspection(123, 45678, 'https://example.com/inspector.jpg');
    */
-  async createInspection(propertyId: number, inspectionId: number): Promise<void> {
+  async createInspection(propertyId: number, inspectionId: number, inspectorImageUrl?: string): Promise<void> {
     const inspectionData: InspectionRequest = {
       inspection: {
         external_id: inspectionId.toString(),
+        ...(inspectorImageUrl !== undefined && { inspector_image_url: inspectorImageUrl }),
       },
     };
 
