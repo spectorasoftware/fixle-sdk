@@ -1,53 +1,65 @@
-# Fixle SDK
+# @spectorasoftware/fixle-sdk
 
-[![CI](https://github.com/spectorasoftware/fixle-sdk/actions/workflows/ci.yml/badge.svg)](https://github.com/spectorasoftware/fixle-sdk/actions/workflows/ci.yml)
-[![Docs](https://img.shields.io/badge/docs-JSDoc-blue)](https://spectorasoftware.github.io/fixle-sdk/index.html)
-
-TypeScript SDK for interacting with the Fixle API.
+TypeScript SDK for the Fixle API. Manage properties, inspections, and appliances.
 
 ## Installation
 
 ```bash
-npm install @spectora/fixle-sdk
+npm install @spectorasoftware/fixle-sdk
 ```
 
-Or for local development:
+### Installing from GitHub Packages
+
+Add to your `.npmrc`:
+
+```
+@spectorasoftware:registry=https://npm.pkg.github.com
+```
+
+Then install:
+
 ```bash
-npm install ../fixle-sdk
+npm install @spectorasoftware/fixle-sdk
 ```
 
-## Usage
+### Installing from Git
+
+```bash
+npm install git+https://github.com/spectorasoftware/fixle-sdk.git
+```
+
+## Quick Start
 
 ```typescript
-import { FixleClient } from '@spectora/fixle-sdk';
+import { FixleClient } from '@spectorasoftware/fixle-sdk';
 
-// Initialize the client
 const client = new FixleClient({
-  apiUrl: 'https://fixle-api.example.com',
-  apiKey: 'your-api-key-here',
+  apiUrl: 'https://api.fixle.com',
+  apiKey: 'your-api-key'
 });
 
-// Send inspection data to Fixle
-const result = await client.sendToFixleApi({
-  inspection_id: 12345,
-  address: '123 Main Street, Portland, OR 97201',
-  appliances: [
-    {
-      item_name: 'Water Heater',
-      section_name: 'Plumbing',
-      brand: 'Rheem',
-      model: 'XE50M06ST45U1',
-      serial_number: 'ABC123456',
-      manufacturer: 'Rheem Manufacturing',
-      year: '2020',
-    },
-  ],
-});
+// Create a property
+const propertyId = await client.findOrCreateProperty('123 Main St, Portland, OR 97201');
 
-console.log(`Created ${result} appliances`);
+// Create an inspection
+await client.createInspection(propertyId, 12345);
+
+// Create an inspection with inspector image
+await client.createInspection(propertyId, 12345, 'https://example.com/inspector.jpg');
+
+// Add an appliance
+await client.createAppliance(propertyId, {
+  item_name: 'Water Heater',
+  section_name: 'Basement',
+  brand: 'Rheem',
+  model: 'XE50M06ST45U1',
+  serial_number: 'ABC123',
+  manufacturer: 'Rheem Manufacturing',
+  year: '2020'
+});
 ```
 
-## API
+## API Reference
 
 ### `FixleClient`
 
@@ -57,63 +69,66 @@ console.log(`Created ${result} appliances`);
 new FixleClient(config: FixleClientConfig)
 ```
 
-**Parameters:**
-- `config.apiUrl` (string): Base URL of the Fixle API
-- `config.apiKey` (string): API key for authentication
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `config.apiUrl` | `string` | Base URL of the Fixle API |
+| `config.apiKey` | `string` | API key for authentication |
 
 #### Methods
 
-##### `sendToFixleApi(data: ExtractedData): Promise<number>`
-
-Sends inspection data to Fixle API. Creates property, inspection, and appliances.
-
-**Returns:** Number of appliances successfully created
-
 ##### `findOrCreateProperty(address: string): Promise<number>`
 
-Finds or creates a property by address.
-
-**Returns:** Property ID
-
-##### `createInspection(propertyId: number, inspectionId: number): Promise<void>`
-
-Creates an inspection for a property.
-
-##### `createPropertyAppliance(propertyId: number, appliance: Appliance): Promise<void>`
-
-Creates a property appliance.
-
-## Types
+Creates a new property from an address string.
 
 ```typescript
-interface ExtractedData {
-  inspection_id: number;
-  address: string;
-  appliances: Appliance[];
-}
-
-interface Appliance {
-  item_name: string;
-  section_name: string;
-  brand: string | null;
-  model: string | null;
-  serial_number: string | null;
-  manufacturer: string | null;
-  year: string | null;
-}
+const propertyId = await client.findOrCreateProperty('123 Main St, Portland, OR 97201');
 ```
 
-## Documentation
+##### `createInspection(propertyId: number, inspectionId: number, inspectorImageUrl?: string): Promise<void>`
 
-Full API documentation is available at: https://spectorasoftware.github.io/fixle-sdk/index.html
+Creates an inspection record for a property.
 
-To generate docs locally:
+```typescript
+// Without inspector image
+await client.createInspection(123, 45678);
 
-```bash
-npm run docs
+// With inspector image
+await client.createInspection(123, 45678, 'https://example.com/inspector.jpg');
 ```
 
-Then open `docs/index.html` in your browser.
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `propertyId` | `number` | ID of the property |
+| `inspectionId` | `number` | External inspection ID |
+| `inspectorImageUrl` | `string` (optional) | URL to inspector's profile image |
+
+##### `createAppliance(propertyId: number, appliance: Appliance): Promise<void>`
+
+Creates an appliance record for a property.
+
+```typescript
+await client.createAppliance(123, {
+  item_name: 'Water Heater',
+  section_name: 'Basement',
+  brand: 'Rheem',
+  model: 'XE50M06ST45U1',
+  serial_number: 'ABC123',
+  manufacturer: 'Rheem Manufacturing',
+  year: '2020'
+});
+```
+
+### `Appliance`
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `item_name` | `string` | Name of the appliance |
+| `section_name` | `string` | Location/section where found |
+| `brand` | `string \| null` | Brand name |
+| `model` | `string \| null` | Model number |
+| `serial_number` | `string \| null` | Serial number |
+| `manufacturer` | `string \| null` | Manufacturer name |
+| `year` | `string \| null` | Year of manufacture |
 
 ## Development
 
@@ -127,14 +142,13 @@ npm run build
 # Run tests
 npm test
 
-# Watch mode
-npm run test:watch
+# Run unit tests only
+npm run test:unit
 
-# Generate docs
-npm run docs
+# Run tests with coverage
+npm run test:coverage
 ```
 
 ## License
 
 MIT
-
