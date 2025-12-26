@@ -265,7 +265,7 @@ export class FixleClient {
     const inspectionData: InspectionRequest = {
       inspection: {
         external_id: inspectionId.toString(),
-        ...(inspectorImageUrl && { inspector_image_url: inspectorImageUrl }),
+        ...(inspectorImageUrl !== undefined && { inspector_image_url: inspectorImageUrl }),
       },
     };
 
