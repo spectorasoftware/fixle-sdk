@@ -58,21 +58,23 @@ describe('FixleClient', () => {
   });
 
   describe('createInspection', () => {
-    it('should create inspection without inspectorImageUrl', async () => {
+    it('should create inspection without inspectorImageUrl and return Fixle ID', async () => {
       setupHttpMock('{"data":{"id":"456"}}');
 
-      await client.createInspection(123, 45678);
+      const fixleInspectionId = await client.createInspection(123, 45678);
 
+      expect(fixleInspectionId).toBe(456);
       const parsedBody = JSON.parse(capturedBody);
       expect(parsedBody.inspection.external_id).toBe('45678');
       expect(parsedBody.inspection.inspector_image_url).toBeUndefined();
     });
 
-    it('should create inspection with inspectorImageUrl', async () => {
+    it('should create inspection with inspectorImageUrl and return Fixle ID', async () => {
       setupHttpMock('{"data":{"id":"456"}}');
 
-      await client.createInspection(123, 45678, 'https://example.com/inspector.jpg');
+      const fixleInspectionId = await client.createInspection(123, 45678, 'https://example.com/inspector.jpg');
 
+      expect(fixleInspectionId).toBe(456);
       const parsedBody = JSON.parse(capturedBody);
       expect(parsedBody.inspection.external_id).toBe('45678');
       expect(parsedBody.inspection.inspector_image_url).toBe('https://example.com/inspector.jpg');
@@ -81,8 +83,9 @@ describe('FixleClient', () => {
     it('should include empty string inspectorImageUrl when explicitly provided', async () => {
       setupHttpMock('{"data":{"id":"456"}}');
 
-      await client.createInspection(123, 45678, '');
+      const fixleInspectionId = await client.createInspection(123, 45678, '');
 
+      expect(fixleInspectionId).toBe(456);
       const parsedBody = JSON.parse(capturedBody);
       expect(parsedBody.inspection.external_id).toBe('45678');
       expect(parsedBody.inspection.inspector_image_url).toBe('');

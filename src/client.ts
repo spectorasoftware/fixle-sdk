@@ -249,28 +249,29 @@ export class FixleClient {
    * Creates an inspection record for a property
    *
    * @param propertyId - ID of the property to associate the inspection with
-   * @param inspectionId - External inspection ID (from the source system)
+   * @param externalInspectionId - External inspection ID (from the source system, e.g., Spectora)
    * @param inspectorImageUrl - Optional URL to the inspector's profile image
-   * @returns Promise that resolves when the inspection is created
+   * @returns Promise resolving to the Fixle internal inspection ID
    * @throws Error if the API request fails or the property doesn't exist
    *
    * @example
-   * await client.createInspection(123, 45678);
-   * console.log('Inspection created successfully');
+   * const fixleInspectionId = await client.createInspection(123, 45678);
+   * console.log(`Created inspection with Fixle ID: ${fixleInspectionId}`);
    *
    * @example
    * // With inspector image
-   * await client.createInspection(123, 45678, 'https://example.com/inspector.jpg');
+   * const fixleInspectionId = await client.createInspection(123, 45678, 'https://example.com/inspector.jpg');
    */
-  async createInspection(propertyId: number, inspectionId: number, inspectorImageUrl?: string): Promise<void> {
+  async createInspection(propertyId: number, externalInspectionId: number, inspectorImageUrl?: string): Promise<number> {
     const inspectionData: InspectionRequest = {
       inspection: {
-        external_id: inspectionId.toString(),
+        external_id: externalInspectionId.toString(),
         ...(inspectorImageUrl !== undefined && { inspector_image_url: inspectorImageUrl }),
       },
     };
 
-    await this.makeApiRequest('POST', `/api/v1/properties/${propertyId}/inspections`, inspectionData);
+    const response = await this.makeApiRequest('POST', `/api/v1/properties/${propertyId}/inspections`, inspectionData);
+    return parseInt(response.data?.id || response.id);
   }
 
   /**
