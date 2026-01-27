@@ -28,6 +28,7 @@ export interface Appliance {
 export interface PropertyApplianceRequest {
   property_appliance: {
     appliance_id?: number | null;
+    inspection_id?: number | null;
     serial: string | null;
     model: string | null;
     year: string | null;
@@ -274,15 +275,16 @@ export class FixleClient {
 
   /**
    * Creates an appliance record for a property
-   * 
+   *
    * The appliance is associated with a master appliance type (currently uses ID 1 as placeholder).
    * In production, you should implement logic to find or create the appropriate master appliance.
-   * 
+   *
    * @param propertyId - ID of the property to add the appliance to
    * @param appliance - Appliance information including brand, model, serial number, etc.
+   * @param inspectionId - Optional inspection ID to link the appliance to an inspection
    * @returns Promise that resolves when the appliance is created
    * @throws Error if the API request fails or the property doesn't exist
-   * 
+   *
    * @example
    * await client.createAppliance(123, {
    *   item_name: 'Water Heater',
@@ -292,12 +294,13 @@ export class FixleClient {
    *   serial_number: 'ABC123456',
    *   manufacturer: 'Rheem Manufacturing',
    *   year: '2020'
-   * });
+   * }, 45678);
    */
-  async createAppliance(propertyId: number, appliance: Appliance): Promise<void> {
+  async createAppliance(propertyId: number, appliance: Appliance, inspectionId?: number): Promise<void> {
     const applianceData: PropertyApplianceRequest = {
       property_appliance: {
         appliance_id: 1,
+        ...(inspectionId !== undefined && { inspection_id: inspectionId }),
         serial: appliance.serial_number,
         model: appliance.model,
         year: appliance.year,

@@ -88,4 +88,58 @@ describe('FixleClient', () => {
       expect(parsedBody.inspection.inspector_image_url).toBe('');
     });
   });
+
+  describe('createAppliance', () => {
+    const testAppliance = {
+      item_name: 'Water Heater',
+      section_name: 'Basement',
+      brand: 'Rheem',
+      model: 'XE50M06ST45U1',
+      serial_number: 'ABC123456',
+      manufacturer: 'Rheem Manufacturing',
+      year: '2020',
+    };
+
+    it('should create appliance without inspectionId', async () => {
+      setupHttpMock('{"data":{"id":"789"}}');
+
+      await client.createAppliance(123, testAppliance);
+
+      const parsedBody = JSON.parse(capturedBody);
+      expect(parsedBody.property_appliance.model).toBe('XE50M06ST45U1');
+      expect(parsedBody.property_appliance.serial).toBe('ABC123456');
+      expect(parsedBody.property_appliance.year).toBe('2020');
+      expect(parsedBody.property_appliance.appliance_id).toBe(1);
+      expect(parsedBody.property_appliance.inspection_id).toBeUndefined();
+    });
+
+    it('should create appliance with inspectionId', async () => {
+      setupHttpMock('{"data":{"id":"789"}}');
+
+      await client.createAppliance(123, testAppliance, 45678);
+
+      const parsedBody = JSON.parse(capturedBody);
+      expect(parsedBody.property_appliance.model).toBe('XE50M06ST45U1');
+      expect(parsedBody.property_appliance.serial).toBe('ABC123456');
+      expect(parsedBody.property_appliance.inspection_id).toBe(45678);
+    });
+
+    it('should include notes with item_name and brand', async () => {
+      setupHttpMock('{"data":{"id":"789"}}');
+
+      await client.createAppliance(123, testAppliance);
+
+      const parsedBody = JSON.parse(capturedBody);
+      expect(parsedBody.property_appliance.notes).toBe('Water Heater - Brand: Rheem');
+    });
+
+    it('should include location from section_name', async () => {
+      setupHttpMock('{"data":{"id":"789"}}');
+
+      await client.createAppliance(123, testAppliance);
+
+      const parsedBody = JSON.parse(capturedBody);
+      expect(parsedBody.property_appliance.location).toBe('Basement');
+    });
+  });
 });
