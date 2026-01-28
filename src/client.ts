@@ -49,6 +49,7 @@ export interface PropertyRequest {
     zip_code: string;
     country?: string;
     email?: string;
+    name?: string;
   };
 }
 
@@ -219,6 +220,7 @@ export class FixleClient {
    *
    * @param address - Full address string (e.g., "123 Main St, Portland, OR 97201")
    * @param email - Optional email address for the property owner/buyer
+   * @param name - Optional name of the property owner/buyer
    * @returns Promise resolving to the property ID
    * @throws Error if the API request fails
    *
@@ -227,10 +229,10 @@ export class FixleClient {
    * console.log(`Created property with ID: ${propertyId}`);
    *
    * @example
-   * // With buyer email
-   * const propertyId = await client.findOrCreateProperty('123 Main St, Portland, OR 97201', 'buyer@example.com');
+   * // With buyer email and name
+   * const propertyId = await client.findOrCreateProperty('123 Main St, Portland, OR 97201', 'buyer@example.com', 'John Doe');
    */
-  async findOrCreateProperty(address: string, email?: string): Promise<number> {
+  async findOrCreateProperty(address: string, email?: string, name?: string): Promise<number> {
     const parts = address.split(',').map(s => s.trim());
     const streetAddress = parts[0] || address;
     const cityStateZip = parts[1] || '';
@@ -245,6 +247,7 @@ export class FixleClient {
         zip_code: zipCode || '00000',
         country: 'US',
         ...(email && { email }),
+        ...(name && { name }),
       },
     };
 
