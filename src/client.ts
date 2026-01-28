@@ -2,6 +2,16 @@ import * as https from 'https';
 import * as http from 'http';
 
 /**
+ * Represents a contact (buyer, inspector, or seller)
+ */
+export interface Contact {
+  /** Email address of the contact */
+  email?: string;
+  /** Name of the contact */
+  name?: string;
+}
+
+/**
  * Represents an appliance with its identifying information
  */
 export interface Appliance {
@@ -48,8 +58,7 @@ export interface PropertyRequest {
     state: string;
     zip_code: string;
     country?: string;
-    email?: string;
-    name?: string;
+    buyers?: Contact[];
   };
 }
 
@@ -62,9 +71,25 @@ export interface InspectionRequest {
     external_id: string;
     inspection_date?: string;
     inspector_name?: string;
+    inspector_email?: string;
     inspector_image_url?: string;
+    sellers?: Contact[];
     notes?: string;
   };
+}
+
+/**
+ * Options for creating an inspection
+ */
+export interface CreateInspectionOptions {
+  /** URL to the inspector's profile image */
+  inspectorImageUrl?: string;
+  /** Inspector's name */
+  inspectorName?: string;
+  /** Inspector's email */
+  inspectorEmail?: string;
+  /** List of selling agents */
+  sellers?: Contact[];
 }
 
 /**
@@ -219,8 +244,7 @@ export class FixleClient {
    * Currently always creates a new property; future versions may search for existing properties first.
    *
    * @param address - Full address string (e.g., "123 Main St, Portland, OR 97201")
-   * @param email - Optional email address for the property owner/buyer
-   * @param name - Optional name of the property owner/buyer
+   * @param buyers - Optional array of buyer contacts
    * @returns Promise resolving to the property ID
    * @throws Error if the API request fails
    *
@@ -229,10 +253,12 @@ export class FixleClient {
    * console.log(`Created property with ID: ${propertyId}`);
    *
    * @example
-   * // With buyer email and name
-   * const propertyId = await client.findOrCreateProperty('123 Main St, Portland, OR 97201', 'buyer@example.com', 'John Doe');
+   * // With buyers
+   * const propertyId = await client.findOrCreateProperty('123 Main St, Portland, OR 97201', [
+   *   { email: 'buyer@example.com', name: 'John Doe' }
+   * ]);
    */
-  async findOrCreateProperty(address: string, email?: string, name?: string): Promise<number> {
+  async findOrCreateProperty(address: string, buyers?: Contact[]): Promise<number> {
     const parts = address.split(',').map(s => s.trim());
     const streetAddress = parts[0] || address;
     const cityStateZip = parts[1] || '';
@@ -246,8 +272,7 @@ export class FixleClient {
         state: state || 'Unknown',
         zip_code: zipCode || '00000',
         country: 'US',
-        ...(email && { email }),
-        ...(name && { name }),
+        ...(buyers && buyers.length > 0 && { buyers }),
       },
     };
 
@@ -260,7 +285,7 @@ export class FixleClient {
    *
    * @param propertyId - ID of the property to associate the inspection with
    * @param externalInspectionId - External inspection ID (from the source system, e.g., Spectora)
-   * @param inspectorImageUrl - Optional URL to the inspector's profile image
+   * @param options - Optional inspection options (inspector info, sellers, etc.)
    * @returns Promise resolving to the Fixle internal inspection ID
    * @throws Error if the API request fails or the property doesn't exist
    *
@@ -269,14 +294,22 @@ export class FixleClient {
    * console.log(`Created inspection with Fixle ID: ${fixleInspectionId}`);
    *
    * @example
-   * // With inspector image
-   * const fixleInspectionId = await client.createInspection(123, 45678, 'https://example.com/inspector.jpg');
+   * // With inspector info and sellers
+   * const fixleInspectionId = await client.createInspection(123, 45678, {
+   *   inspectorImageUrl: 'https://example.com/inspector.jpg',
+   *   inspectorName: 'John Inspector',
+   *   inspectorEmail: 'inspector@example.com',
+   *   sellers: [{ email: 'seller@example.com', name: 'Jane Seller' }]
+   * });
    */
-  async createInspection(propertyId: number, externalInspectionId: number, inspectorImageUrl?: string): Promise<number> {
+  async createInspection(propertyId: number, externalInspectionId: number, options?: CreateInspectionOptions): Promise<number> {
     const inspectionData: InspectionRequest = {
       inspection: {
         external_id: externalInspectionId.toString(),
-        ...(inspectorImageUrl !== undefined && { inspector_image_url: inspectorImageUrl }),
+        ...(options?.inspectorImageUrl && { inspector_image_url: options.inspectorImageUrl }),
+        ...(options?.inspectorName && { inspector_name: options.inspectorName }),
+        ...(options?.inspectorEmail && { inspector_email: options.inspectorEmail }),
+        ...(options?.sellers && options.sellers.length > 0 && { sellers: options.sellers }),
       },
     };
 
