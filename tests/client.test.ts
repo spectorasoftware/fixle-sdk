@@ -145,4 +145,42 @@ describe('FixleClient', () => {
       expect(parsedBody.property_appliance.location).toBe('Basement');
     });
   });
+
+  describe('triggerApplianceReport', () => {
+    it('should trigger appliance report with default async=true', async () => {
+      setupHttpMock('{"data":{"id":"456","attributes":{"status":"pending","message":"Report queued"}}}', 200);
+
+      const result = await client.triggerApplianceReport(456);
+
+      expect(result.status).toBe('pending');
+      expect(result.message).toBe('Report queued');
+    });
+
+    it('should trigger appliance report with reportId', async () => {
+      setupHttpMock('{"data":{"id":"456","attributes":{"status":"pending","message":"Report queued"}}}', 200);
+
+      const result = await client.triggerApplianceReport(456, 'report-123');
+
+      expect(result.status).toBe('pending');
+      expect(result.message).toBe('Report queued');
+    });
+
+    it('should trigger appliance report with async=false', async () => {
+      setupHttpMock('{"data":{"id":"456","attributes":{"status":"completed","message":"Report generated"}}}', 200);
+
+      const result = await client.triggerApplianceReport(456, 'report-123', false);
+
+      expect(result.status).toBe('completed');
+      expect(result.message).toBe('Report generated');
+    });
+
+    it('should return default values when attributes are missing', async () => {
+      setupHttpMock('{"data":{"id":"456"}}', 200);
+
+      const result = await client.triggerApplianceReport(456);
+
+      expect(result.status).toBe('unknown');
+      expect(result.message).toBe('Report triggered');
+    });
+  });
 });

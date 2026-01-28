@@ -313,5 +313,42 @@ export class FixleClient {
     await this.makeApiRequest('POST', `/api/v1/properties/${propertyId}/appliances`, applianceData);
   }
 
+  /**
+   * Triggers the appliance report generation for an inspection
+   *
+   * This should be called after all appliances have been created for an inspection.
+   * It signals to Fixle that the inspection data is complete and ready for processing
+   * (PDF generation, recall checking, etc.).
+   *
+   * @param inspectionId - Fixle internal inspection ID
+   * @param reportId - Optional external report ID (from Spectora)
+   * @param async - Whether to process asynchronously (default: true)
+   * @returns Promise resolving to the trigger response with status and message
+   * @throws Error if the API request fails or the inspection doesn't exist
+   *
+   * @example
+   * // After creating all appliances
+   * const result = await client.triggerApplianceReport(fixleInspectionId);
+   * console.log(`Report status: ${result.status}, message: ${result.message}`);
+   */
+  async triggerApplianceReport(
+    inspectionId: number,
+    reportId?: string,
+    async: boolean = true
+  ): Promise<{ status: string; message: string }> {
+    const params = new URLSearchParams();
+    if (reportId) params.append('report_id', reportId);
+    params.append('async', async.toString());
+
+    const queryString = params.toString();
+    const path = `/api/v1/inspections/${inspectionId}/reports/appliance${queryString ? `?${queryString}` : ''}`;
+
+    const response = await this.makeApiRequest('POST', path);
+    return {
+      status: response.data?.attributes?.status || 'unknown',
+      message: response.data?.attributes?.message || 'Report triggered',
+    };
+  }
+
 }
 
