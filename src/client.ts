@@ -48,6 +48,7 @@ export interface PropertyRequest {
     state: string;
     zip_code: string;
     country?: string;
+    email?: string;
   };
 }
 
@@ -212,19 +213,24 @@ export class FixleClient {
 
   /**
    * Finds an existing property or creates a new one based on the address
-   * 
+   *
    * The address is parsed into street address, city, state, and zip code components.
    * Currently always creates a new property; future versions may search for existing properties first.
-   * 
+   *
    * @param address - Full address string (e.g., "123 Main St, Portland, OR 97201")
+   * @param email - Optional email address for the property owner/buyer
    * @returns Promise resolving to the property ID
    * @throws Error if the API request fails
-   * 
+   *
    * @example
    * const propertyId = await client.findOrCreateProperty('123 Main St, Portland, OR 97201');
    * console.log(`Created property with ID: ${propertyId}`);
+   *
+   * @example
+   * // With buyer email
+   * const propertyId = await client.findOrCreateProperty('123 Main St, Portland, OR 97201', 'buyer@example.com');
    */
-  async findOrCreateProperty(address: string): Promise<number> {
+  async findOrCreateProperty(address: string, email?: string): Promise<number> {
     const parts = address.split(',').map(s => s.trim());
     const streetAddress = parts[0] || address;
     const cityStateZip = parts[1] || '';
@@ -238,6 +244,7 @@ export class FixleClient {
         state: state || 'Unknown',
         zip_code: zipCode || '00000',
         country: 'US',
+        ...(email && { email }),
       },
     };
 
